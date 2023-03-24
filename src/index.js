@@ -4,8 +4,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import './sass/index.scss';
 import NewApiImageService from './js/fetchPictures';
-import './sass/index.scss';
-
+import renderGallery from './js/renderHtml';
 
 const refs = {
   formEl: document.querySelector('#search-form'),
@@ -22,15 +21,16 @@ let totalPages = 1;
 refs.formEl.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(event) {
-  event.preventDefault();
-  refs.divEl.innerHTML = '';
+	event.preventDefault();
+	refs.divEl.innerHTML = '';
   ImagesApi.resetPage();
   ImagesApi.query = event.target.elements.searchQuery.value.trim();
   if (ImagesApi.query === '') {
-    return Notiflix.Notify.warning('Please enter a query');
+    return Notiflix.Notify.warning('Please, fill in the search field');
   }
 
-  fetchImages();
+	fetchImages();
+	event.currentTarget.reset();
 }
 
 async function fetchImages() {
@@ -41,52 +41,14 @@ async function fetchImages() {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
-  }
+	}
+	else {
+		Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+	}
 	imagesMarkup(response);
-	Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+	
 }
 
-function renderGallery(image) {
-  return image
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `
-              <a class="gallery__link" href="${largeImageURL}">
-                  <div class="photo-card">
-                      <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-                      <div class="info">
-                          <p class="info-item">
-                              <b>Likes</b>
-                              ${likes}
-                          </p>
-                          <p class="info-item">
-                              <b>Views</b>
-                              ${views}
-                          </p>
-                          <p class="info-item">
-                              <b>Comments</b>
-                              ${comments}
-                          </p>
-                          <p class="info-item">
-                              <b>Downloads</b>
-                              ${downloads}
-                          </p>
-                      </div>
-                  </div>
-              </a>
-          `;
-      }
-    )
-    .join('');
-}
 
 function imagesMarkup(data) {
   refs.divEl.insertAdjacentHTML('beforeend', renderGallery(data.hits));
@@ -96,7 +58,8 @@ function imagesMarkup(data) {
       'We are sorry, but you have reached the end of search results.'
     );
   }
-  ImagesApi.incrementPage();
+	ImagesApi.incrementPage();
+	
 }
 
 const onEntry = entries => {
@@ -116,93 +79,3 @@ const options = {
 const observer = new IntersectionObserver(onEntry, options);
 
 observer.observe(refs.observerEl);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import fetchPictures from './js/fetchPictures';
-// import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
-
-
-// const searchForm = document.querySelector('#search-form');
-// const loadMoreBtn = document.querySelector('.load-more');
-// const gallery = document.querySelector('.gallery');
-
-// searchForm.addEventListener('submit', onSearch);
-// loadMoreBtn.addEventListener('click', onLoadMore);
-
-
-
-// function onSearch(e) {
-//   e.preventDefault();
-//   const searchQuery = e.currentTarget.searchQuery.value;
-//   page = 1;
-
-//   fetchPictures(searchQuery, page);
-// }
-
-// function renderHits(hits) {
-// 	return hits
-//     .map(
-//       ({
-//         webformatURL,
-//         largeImageURL,
-//         likes,
-//         tags,
-//         views,
-//         comments,
-//         downloads,
-//       }) => {
-//         return `<div class="photo-card">
-//   <a href='${largeImageURL}'><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-//   <div class="info">
-//     <p class="info-item">
-//       <b>Likes</b>${likes}
-//     </p>
-//     <p class="info-item">
-//       <b>Views</b>${views}
-//     </p>
-//     <p class="info-item">
-//       <b>Comments</b>${comments}
-//     </p>
-//     <p class="info-item">
-//       <b>Downloads</b>${downloads}
-//     </p>
-//   </div>
-// </div>
-// `;
-//       }
-//     )
-//     .join('');
-// };
-
-
-// renderHits(hits);
-
-
-// function onLoadMore() {
-
-// 	fetchPictures();
-// }
-
-// const lightbox = new SimpleLightbox('.gallery a', {
-//   captionPosition: 'bottom',
-//   captionsData: 'alt',
-//   captionDelay: '250',
-// });
