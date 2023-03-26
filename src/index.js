@@ -74,7 +74,7 @@ const onEntry = entries => {
 };
 
 const options = {
-  rootMargin: '400px',
+  rootMargin: '450px',
 };
 const observer = new IntersectionObserver(onEntry, options);
 
