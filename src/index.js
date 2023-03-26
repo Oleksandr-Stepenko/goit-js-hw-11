@@ -9,7 +9,7 @@ import renderGallery from './js/renderHtml';
 const refs = {
   formEl: document.querySelector('#search-form'),
   divEl: document.querySelector('.gallery'),
-  observerEl: document.querySelector('#sentinel'),
+  loadMoreEl: document.querySelector('#loadMore'),
 };
 
 const simpleLightbox = new SimpleLightbox('.gallery a');
@@ -78,4 +78,4 @@ const options = {
 };
 const observer = new IntersectionObserver(onEntry, options);
 
-observer.observe(refs.observerEl);
+observer.observe(refs.loadMoreEl);

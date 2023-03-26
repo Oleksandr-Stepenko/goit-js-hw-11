@@ -12,7 +12,7 @@ export default function renderGallery(image) {
         downloads,
       }) => {
         return `
-              <a class="gallery__link" href="${largeImageURL}">
+              <a class="gallery-link" href="${largeImageURL}">
                   <div class="photo-card">
                       <img src="${webformatURL}" alt="${tags}" loading="lazy" />
                       <div class="info">
