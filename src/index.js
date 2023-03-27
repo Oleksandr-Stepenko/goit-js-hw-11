@@ -23,8 +23,8 @@ refs.formEl.addEventListener('submit', onFormSubmit);
 function onFormSubmit(event) {
 	event.preventDefault();
 	refs.divEl.innerHTML = '';
-  ImagesApi.resetPage();
   ImagesApi.query = event.target.elements.searchQuery.value.trim();
+  ImagesApi.resetPage();
   if (ImagesApi.query === '') {
     return Notiflix.Notify.warning('Please, fill in the search field');
   }
@@ -74,7 +74,7 @@ const onEntry = entries => {
 };
 
 const options = {
-  rootMargin: '450px',
+  rootMargin: '400px',
 };
 const observer = new IntersectionObserver(onEntry, options);
 
