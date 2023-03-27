@@ -58,15 +58,15 @@ function imagesMarkup(data) {
       'We are sorry, but you have reached the end of search results.'
     );
   }
-	ImagesApi.incrementPage();
 	
 }
 
 const onEntry = entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && ImagesApi.query !== '') {
-      ImagesApi.fetchImage().then(images => {
-        imagesMarkup(images);
+	entries.forEach(entry => {
+		if (entry.isIntersecting && ImagesApi.query !== '') {
+			ImagesApi.incrementPage();
+			ImagesApi.fetchImage().then(images => {
+				imagesMarkup(images);
         simpleLightbox.refresh();
       });
     }
