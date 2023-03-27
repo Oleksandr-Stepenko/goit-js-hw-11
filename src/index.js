@@ -64,7 +64,6 @@ function imagesMarkup(data) {
 const onEntry = entries => {
 	entries.forEach(entry => {
 		if (entry.isIntersecting && ImagesApi.query !== '') {
-			ImagesApi.incrementPage();
 			ImagesApi.fetchImage().then(images => {
 				imagesMarkup(images);
         simpleLightbox.refresh();
