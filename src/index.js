@@ -57,6 +57,15 @@ function imagesMarkup(data) {
 
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
+const { height: cardHeight } = document
+  .querySelector('.gallery')
+  .firstElementChild.getBoundingClientRect();
+
+window.scrollBy({
+  top: cardHeight * 2,
+  behavior: 'smooth',
+});
+
 function onLoadMore() {
   imagesApi.fetchImage().then(imagesMarkup);
   simpleLightbox.refresh();
