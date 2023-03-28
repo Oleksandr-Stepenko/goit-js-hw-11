@@ -1,4 +1,3 @@
-
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -9,72 +8,80 @@ import renderGallery from './js/renderHtml';
 const refs = {
   formEl: document.querySelector('#search-form'),
   divEl: document.querySelector('.gallery'),
-  loadMoreEl: document.querySelector('#loadMore'),
+  loadMoreBtn: document.querySelector('.load-moreBtn'),
 };
+
+refs.loadMoreBtn.style.display = 'none';
 
 const simpleLightbox = new SimpleLightbox('.gallery a');
 
-const ImagesApi = new NewApiImageService();
+const imagesApi = new NewApiImageService();
 
 let totalPages = 1;
 
 refs.formEl.addEventListener('submit', onFormSubmit);
 
 function onFormSubmit(event) {
-	event.preventDefault();
-	refs.divEl.innerHTML = '';
-  ImagesApi.query = event.target.elements.searchQuery.value.trim();
-  ImagesApi.resetPage();
-  if (ImagesApi.query === '') {
+  event.preventDefault();
+  refs.divEl.innerHTML = '';
+  imagesApi.query = event.target.elements.searchQuery.value.trim();
+
+  imagesApi.resetPage();
+  if (!imagesApi.query) {
     return Notiflix.Notify.warning('Please, fill in the search field');
   }
-
-	fetchImages();
-	event.currentTarget.reset();
+  fetchImages();
+  event.currentTarget.reset();
 }
 
 async function fetchImages() {
-  const response = await ImagesApi.fetchImage();
+  const response = await imagesApi.fetchImage();
   const { hits, totalHits } = response;
   totalPages = Math.ceil(totalHits / 40);
   if (!hits.length) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
-	}
-	else {
-		Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
-	}
-	imagesMarkup(response);
-	
+  } else {
+    Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
+    refs.loadMoreBtn.style.display = 'block';
+  }
+  imagesMarkup(response);
 }
-
 
 function imagesMarkup(data) {
   refs.divEl.insertAdjacentHTML('beforeend', renderGallery(data.hits));
-	simpleLightbox.refresh();
-  if (ImagesApi.page === totalPages) {
+  simpleLightbox.refresh();
+  imagesApi.incrementPage();
+}
+
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
+
+function onLoadMore() {
+  imagesApi.fetchImage().then(imagesMarkup);
+  simpleLightbox.refresh();
+  if (imagesApi.page >= totalPages) {
+    refs.loadMoreBtn.style.display = 'none';
     Notiflix.Notify.info(
       'We are sorry, but you have reached the end of search results.'
     );
   }
-	 ImagesApi.incrementPage();
 }
 
-const onEntry = entries => {
-	entries.forEach(entry => {
-		if (entry.isIntersecting && ImagesApi.query !== '') {
-			ImagesApi.fetchImage().then(images => {
-				imagesMarkup(images);
-        simpleLightbox.refresh();
-      });
-    }
-  });
-};
+// const onEntry = entries => {
+// 	entries.forEach(entry => {
+// 		if (entry.isIntersecting && ImagesApi.query !== '') {
+// 			ImagesApi.fetchImage().then(images => {
+// 				imagesMarkup(images);
+//         simpleLightbox.refresh();
+//       });
+//     }
+//   });
+// };
 
-const options = {
-  rootMargin: '400px',
-};
-const observer = new IntersectionObserver(onEntry, options);
+// const options = {
+//   rootMargin: '400px',
+// };
+// const observer = new IntersectionObserver(onEntry, options);
 
-observer.observe(refs.loadMoreEl);
+// observer.observe(refs.loadMoreEl);
