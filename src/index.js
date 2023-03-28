@@ -58,7 +58,7 @@ function imagesMarkup(data) {
       'We are sorry, but you have reached the end of search results.'
     );
   }
-	
+	 ImagesApi.incrementPage();
 }
 
 const onEntry = entries => {
